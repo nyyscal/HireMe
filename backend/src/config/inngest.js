@@ -4,8 +4,8 @@ import {User} from "../models/user.model.js"
 
 export const inngest = new Inngest({id:"hire-me"})
 
-const syncUser = inngest.createFunction(
-  {id:"hireme_sync-user"},
+const syncUserHire = inngest.createFunction(
+  {id:"hire-me_sync-user"},
   {event:"clerk/user.created"},
   async({event})=>{
     try{
@@ -29,8 +29,8 @@ const syncUser = inngest.createFunction(
   }
 )
 
-const deleteUserFromDB = inngest.createFunction(
-  {id:"hireme_delete-user-from-db"},
+const deleteUserFromDBHire = inngest.createFunction(
+  {id:"hire-me_delete-user-from-db"},
   {event:"clerk/user.deleted"},
   //Delete user using webhooks
   async({event})=>{
@@ -46,4 +46,4 @@ const deleteUserFromDB = inngest.createFunction(
 }
 )
 
-export const functions = [syncUser, deleteUserFromDB]
+export const functions = [syncUserHire, deleteUserFromDBHire]
