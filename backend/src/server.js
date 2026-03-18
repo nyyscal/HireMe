@@ -10,10 +10,10 @@ const app = express();
 const PORT = ENV.PORT || 3000;
 
 
+app.use(express.json());
 // --- Inngest webhook route ---
 app.use("/api/inngest", serve({ client: inngest, functions }));
 
-app.use(express.json());
 
 // --- Clerk middleware ---
 app.use(clerkMiddleware());
