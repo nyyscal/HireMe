@@ -1,49 +1,58 @@
-import {Inngest} from "inngest"
-import {connectDB} from "./db.js"
-import {User} from "../models/user.model.js"
+import { Inngest } from "inngest";
+import { connectDB } from "./db.js";
+import { User } from "../models/user.model.js";
 
-export const inngest = new Inngest({id:"hire-me"})
+// Create Inngest client (unique ID per project)
+export const inngest = new Inngest({ id: "hire-me", eventKey: process.env.INNGEST_EVENT_KEY,  });
 
+// --- Functions ---
+
+// Sync new Clerk user to DB
 const syncUserHire = inngest.createFunction(
-  {id:"hire-me_sync-user"},
-  {event:"clerk/user.created"},
-  async({event})=>{
-    try{
-      await connectDB()
-      const {id,email_addresses, first_name, last_name, image_url} = event.data
+  { id: "hire-me_sync-user" },
+  { event: "clerk/user.created" },
+  async ({ event }) => {
+    console.log("🔥 syncUserHire triggered!", event.id);
+    try {
+      await connectDB();
+      const { id, email_addresses, first_name, last_name, image_url } = event.data;
       if (!id) throw new Error("Clerk user ID missing");
-      //Clerk Sends these fields via webhooks
+
       const newUser = {
-        clerkId:id,
+        clerkId: id,
         email: email_addresses?.[0]?.email_address || "",
-        name:`${first_name || ""} ${last_name||""}` ||"User",
+        name: `${first_name || ""} ${last_name || ""}`.trim() || "User",
         imageUrl: image_url || "",
         addresses: [],
-        wishlist: []
-      }
-      await User.create(newUser)
-    } catch(error){
-      console.log("Error syncing user to the database.")
-      throw error
+        wishlist: [],
+      };
+
+      await User.create(newUser);
+      console.log("✅ User created in DB:", newUser.email);
+    } catch (error) {
+      console.error("❌ Error syncing user:", error);
+      throw error;
     }
   }
-)
+);
 
+// Delete Clerk user from DB
 const deleteUserFromDBHire = inngest.createFunction(
-  {id:"hire-me_delete-user-from-db"},
-  {event:"clerk/user.deleted"},
-  //Delete user using webhooks
-  async({event})=>{
-  try {
-    await connectDB()
-    
-    const {id} = event.data
-    await User.deleteOne({clerkId: id})
-  }catch (error) {
-     console.log("Error deleting user from the database.")
-     throw error
+  { id: "hire-me_delete-user-from-db" },
+  { event: "clerk/user.deleted" },
+  async ({ event }) => {
+    console.log("🔥 deleteUserFromDBHire triggered!", event.id);
+    try {
+      await connectDB();
+      const { id } = event.data;
+      await User.deleteOne({ clerkId: id });
+      console.log("✅ User deleted from DB:", id);
+    } catch (error) {
+      console.error("❌ Error deleting user:", error);
+      throw error;
+    }
   }
-}
-)
+);
 
-export const functions = [syncUserHire, deleteUserFromDBHire]
+// Export functions array for registration
+export const functions = [syncUserHire, deleteUserFromDBHire];
