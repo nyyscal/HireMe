@@ -22,7 +22,7 @@ export const clerkWebhook = async (req, res) => {
   let payload;
 
   try {
-    payload = wh.verify(JSON.stringify(req.body), {
+    payload = wh.verify(req.body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,

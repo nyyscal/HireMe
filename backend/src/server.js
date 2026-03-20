@@ -11,6 +11,12 @@ const app = express();
 const PORT = ENV.PORT || 3000;
 
 
+app.post(
+  "/api/webhooks/clerk",
+  express.raw({ type: "application/json" }), // ← important, must be raw
+  clerkWebhook
+);
+
 app.use(express.json());
 // app.use("/api/inngest", serve({ client: inngest, functions }));
 
@@ -19,11 +25,6 @@ app.get("/api/health", (_, res) => {
   res.send("Server is healthy!");
 });
 
-app.post(
-  "/api/webhooks/clerk",
-  express.raw({ type: "application/json" }), // ← important, must be raw
-  clerkWebhook
-);
 
 app.use(clerkMiddleware());
 
