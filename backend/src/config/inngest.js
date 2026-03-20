@@ -52,19 +52,20 @@ const deleteUserFromDBHire = inngest.createFunction(
   }
 );
 
-// Test Function
-const testFunctionHire = inngest.createFunction(
-  { id: "hire-me_testFunction" },
-  async ({  }) => {
-    console.log("Just a test function. ");
-    try {
-      console.log("✅ Test function:", id);
-    } catch (error) {
-      console.error("❌ Error running test function:", error);
-      throw error;
-    }
-  }
-);
+// // Test Function
+// const testFunctionHire = inngest.createFunction(
+//   { id: "hire-me_testFunction" },
+//   { event: "test/function" },  
+//   async ({  }) => {
+//     console.log("Just a test function. ");
+//     try {
+//       console.log("✅ Test function:", id);
+//     } catch (error) {
+//       console.error("❌ Error running test function:", error);
+//       throw error;
+//     }
+//   }
+// );
 
 // Export functions array for registration
-export const functions = [syncUserHire, deleteUserFromDBHire, testFunctionHire];
+export const functions = [syncUserHire, deleteUserFromDBHire];
