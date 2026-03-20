@@ -3,9 +3,7 @@ import { connectDB } from "./db.js";
 import { User } from "../models/user.model.js";
 
 // Create Inngest client (unique ID per project)
-export const inngest = new Inngest({ id: "hire-me", eventKey: process.env.INNGEST_EVENT_KEY,  });
-
-// --- Functions ---
+export const inngest = new Inngest({ id: "hire-app" });
 
 // Sync new Clerk user to DB
 const syncUserHire = inngest.createFunction(
@@ -54,5 +52,19 @@ const deleteUserFromDBHire = inngest.createFunction(
   }
 );
 
+// Test Function
+const testFunctionHire = inngest.createFunction(
+  { id: "hire-me_testFunction" },
+  async ({  }) => {
+    console.log("Just a test function. ");
+    try {
+      console.log("✅ Test function:", id);
+    } catch (error) {
+      console.error("❌ Error running test function:", error);
+      throw error;
+    }
+  }
+);
+
 // Export functions array for registration
-export const functions = [syncUserHire, deleteUserFromDBHire];
+export const functions = [syncUserHire, deleteUserFromDBHire, testFunctionHire];
