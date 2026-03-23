@@ -1,64 +1,23 @@
+// models/User.js
 import mongoose from "mongoose"
 
-const addressSchema = new mongoose.Schema({
-  label: {
-    type:String,
-    required:true,
+const userSchema = new mongoose.Schema(
+  {
+    clerkId:  { type: String, unique: true, required: true },
+    email:    { type: String, unique: true, required: true },
+    name:     { type: String, required: true },
+    phone:    { type: String, default: "" },
+    imageUrl: { type: String, default: "" },
+    role: {
+      type: String,
+      enum: ["client", "teacher", "admin"],
+      default: "client",
+      required: true,
+    },
+    // Soft ban by admin
+    isActive: { type: Boolean, default: true },
   },
-  fullName:{
-    type: String,
-    required:true,
-  },
-  streetAddress:{
-    type: String,
-    required:true,
-  },
-  city:{
-    type: String,
-    required:true,
-  },
-  state:{
-    type: String,
-    required:true,
-  },
-  zipCode:{
-    type: String,
-    required:true,
-  },
-  phoneNumber:{
-    type: String,
-    required:true,
-  },
-  isDefault:{
-    type:Boolean,
-    default:false
-  }
-})
+  { timestamps: true }
+)
 
-const userSchema = new mongoose.Schema({
-  email:{
-    type: String,
-    required: true,
-    unique: true,
-  },
-  name:{
-    type:String,
-    required: true,
-  },
-  imageUrl:{
-    type:String,
-    default:"",
-  },
-  clerkId:{
-    type:String,
-    unique:true,
-    required:true,
-  },
-  addresses:[addressSchema],
-  wishlist:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref:"Product"
-  }]
-}, {timestamps:true})
-
-export const User = mongoose.model("User",userSchema)
+export const User = mongoose.model("User", userSchema)
